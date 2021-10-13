@@ -3,6 +3,7 @@ The Federal Aviation Administration publishes [Preliminary Accident and Incident
 
 Note that the data contained here is mostly only useful for [aviation *incidents*](https://www.law.cornell.edu/cfr/text/49/830.2). The National Transportation Safety Board investigates all [aviation *accidents*](https://www.law.cornell.edu/cfr/text/49/830.2). If you are interested in an *accident*, the NTSB produces a much more detailed preliminary report within a few weeks following the accident and a final report within a year or two. NTSB reports can be obtained using the [CAROL Query tool](https://data.ntsb.gov/carol-main-public/basic-search) and the NTSB database is [available here](https://www.ntsb.gov/Pages/AviationQuery.aspx).
 
+# [Access the data](FAA-Accident-Incident-Data.csv)
 
 ## Example of FAA Incident Data:
 
