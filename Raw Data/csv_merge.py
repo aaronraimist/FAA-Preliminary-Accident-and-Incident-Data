@@ -36,4 +36,6 @@ df_merged.drop(
     columns=["EVENT_LCL_DATE_pddatetime", "EVENT_LCL_TIME_pddatetime"], inplace=True
 )
 
+df_merged = df_merged.convert_dtypes()
+
 df_merged.to_csv("../FAA-Accident-Incident-Data.csv", index=False)
