@@ -1,0 +1,71 @@
+name: Automatic CSV PR
+
+on:
+  schedule:
+    - cron: '0 15 * * 6'
+  workflow_dispatch:
+
+jobs:
+  update-csv:
+    runs-on: macos-14
+
+    steps:
+      - id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download new CSV
+        run: |
+          if curl -o "Raw Data/faa_ai_prelim ${{ steps.date.outputs.date }}.csv" https://www.asias.faa.gov/apex/f?p=100:93::FLOW_EXCEL_OUTPUT_R16070756597770675_en; then
+            echo "CSV download successful."
+          else
+            echo "CSV download failed."
+            exit 1
+          fi
+
+      - name: Check CSV file size
+        id: check-csv
+        run: |
+          if [ -s "Raw Data/faa_ai_prelim ${{ steps.date.outputs.date }}.csv" ]; then
+            echo "CSV file is not empty."
+          else
+            echo "CSV file is empty."
+            exit 1
+          fi
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+      - run: pip install -r "Raw Data/requirements.txt"
+
+      - name: Run Python script
+        working-directory: "Raw Data"
+        run: |
+          python csv_merge.py
+
+      - name: Commit and Push Changes
+        if: steps.check-csv.outcome == 'success'
+        run: |
+          git config --global user.name "Aaron Raimist" # "GitHub Actions"
+          git config --global user.email "aaron@raim.ist" # "actions@github.com"
+
+          branch_name='${{ steps.date.outputs.date }}-update'
+
+          git checkout -b "$branch_name"
+
+          git add "Raw Data/faa_ai_prelim ${{ steps.date.outputs.date }}.csv"
+          git add "FAA-Accident-Incident-Data.csv"
+
+          git commit -m '${{ steps.date.outputs.date }} Update' -m "Automatically created with GitHub Actions."
+
+          git push origin "$branch_name"
+
+      - name: create pull request
+        run: gh pr create -B main -H '${{ steps.date.outputs.date }}-update' --title '${{ steps.date.outputs.date }} Update' --body 'Automatically created with GitHub Actions.'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
