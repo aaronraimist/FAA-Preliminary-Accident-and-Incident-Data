@@ -44,7 +44,7 @@ python-dateutil==2.8.2
 pytz==2021.3
 pyzmq==26.0.3
 referencing==0.35.1
-requests==2.32.4
+requests==2.33.0
 rpds-py==0.18.1
 six==1.16.0
 soupsieve==2.5
